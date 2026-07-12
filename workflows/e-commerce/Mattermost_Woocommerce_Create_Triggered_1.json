@@ -1,0 +1,55 @@
+{
+  "id": "wf7d89d16cef7b",
+  "name": "Send a message on Mattermost when an order is created in WooCommerce",
+  "nodes": [
+    {
+      "name": "WooCommerce Trigger",
+      "type": "n8n-nodes-base.wooCommerceTrigger",
+      "position": [
+        550,
+        260
+      ],
+      "parameters": {
+        "event": "order.created"
+      },
+      "credentials": {
+        "wooCommerceApi": "woocommerce"
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Mattermost",
+      "type": "n8n-nodes-base.mattermost",
+      "position": [
+        750,
+        260
+      ],
+      "parameters": {
+        "message": "={{$(\"WooCommerce Trigger\").item.json[\"billing\"][\"first_name\"]}} bought {{$(\"WooCommerce Trigger\").item.json[\"line_items\"][0][\"name\"]}}!",
+        "channelId": "pj1p95ebei8g3ro5p84kxxuuio",
+        "attachments": [],
+        "otherOptions": {}
+      },
+      "credentials": {
+        "mattermostApi": "Mattermost Credentials"
+      },
+      "typeVersion": 1
+    }
+  ],
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "connections": {
+    "WooCommerce Trigger": {
+      "main": [
+        [
+          {
+            "node": "Mattermost",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

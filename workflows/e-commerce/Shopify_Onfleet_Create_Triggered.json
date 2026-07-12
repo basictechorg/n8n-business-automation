@@ -1,0 +1,57 @@
+{
+  "id": "wfeaacd37615e9",
+  "name": "Creating an Onfleet Task for a new Shopify Fulfillment",
+  "nodes": [
+    {
+      "name": "Shopify Trigger",
+      "type": "n8n-nodes-base.shopifyTrigger",
+      "position": [
+        240,
+        440
+      ],
+      "parameters": {
+        "topic": "fulfillments/create"
+      },
+      "credentials": {
+        "shopifyApi": {
+          "name": "Add your shopifyApi credential"
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Onfleet",
+      "type": "n8n-nodes-base.onfleet",
+      "position": [
+        460,
+        440
+      ],
+      "parameters": {
+        "operation": "create",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "onfleetApi": {
+          "name": "Add your onfleetApi credential"
+        }
+      },
+      "typeVersion": 1
+    }
+  ],
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "connections": {
+    "Shopify Trigger": {
+      "main": [
+        [
+          {
+            "node": "Onfleet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

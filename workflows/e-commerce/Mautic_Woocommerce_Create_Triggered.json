@@ -1,0 +1,159 @@
+{
+  "id": "wf67aac1bc4a0d",
+  "name": "New WooCommerce Customer to Mautic",
+  "nodes": [
+    {
+      "name": "Check for Existing",
+      "type": "n8n-nodes-base.mautic",
+      "position": [
+        280,
+        480
+      ],
+      "parameters": {
+        "options": {
+          "search": "={{$json[\"email\"]}}"
+        },
+        "operation": "getAll",
+        "authentication": "oAuth2"
+      },
+      "credentials": {
+        "mauticOAuth2Api": {
+          "name": "Add your mauticOAuth2Api credential"
+        }
+      },
+      "typeVersion": 1,
+      "alwaysOutputData": true
+    },
+    {
+      "name": "If New",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        460,
+        480
+      ],
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json[\"id\"]}}",
+              "operation": "isEmpty"
+            }
+          ]
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Create Contact",
+      "type": "n8n-nodes-base.mautic",
+      "position": [
+        680,
+        320
+      ],
+      "parameters": {
+        "email": "={{$(\"Customer Created\").item.json[\"email\"]}}",
+        "company": "={{$(\"Customer Created\").item.json[\"billing\"][\"company\"]}}",
+        "options": {},
+        "lastName": "={{$(\"Customer Created\").item.json[\"last_name\"]}}",
+        "firstName": "={{$(\"Customer Created\").item.json[\"first_name\"]}}",
+        "authentication": "oAuth2",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "mauticOAuth2Api": {
+          "name": "Add your mauticOAuth2Api credential"
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Update Contact",
+      "type": "n8n-nodes-base.mautic",
+      "position": [
+        680,
+        580
+      ],
+      "parameters": {
+        "options": {},
+        "contactId": "={{$json[\"id\"]}}",
+        "operation": "update",
+        "updateFields": {
+          "lastName": "={{$(\"Customer Created or Updated\").item.json[\"last_name\"]}}",
+          "firstName": "={{$(\"Customer Created or Updated\").item.json[\"first_name\"]}}"
+        },
+        "authentication": "oAuth2"
+      },
+      "credentials": {
+        "mauticOAuth2Api": {
+          "name": "Add your mauticOAuth2Api credential"
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Customer Created or Updated",
+      "type": "n8n-nodes-base.wooCommerceTrigger",
+      "position": [
+        100,
+        480
+      ],
+      "parameters": {
+        "event": "customer.updated"
+      },
+      "credentials": {
+        "wooCommerceApi": {
+          "name": "Add your wooCommerceApi credential"
+        }
+      },
+      "typeVersion": 1
+    }
+  ],
+  "settings": {
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true,
+    "saveDataSuccessExecution": "all",
+    "executionOrder": "v1"
+  },
+  "connections": {
+    "If New": {
+      "main": [
+        [
+          {
+            "node": "Create Contact",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check for Existing": {
+      "main": [
+        [
+          {
+            "node": "If New",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Customer Created or Updated": {
+      "main": [
+        [
+          {
+            "node": "Check for Existing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

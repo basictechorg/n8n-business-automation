@@ -1,0 +1,86 @@
+{
+  "id": "wfc248160a686d",
+  "name": "Send financial metrics monthly to Mattermost",
+  "nodes": [
+    {
+      "name": "ProfitWell",
+      "type": "n8n-nodes-base.profitWell",
+      "position": [
+        730,
+        220
+      ],
+      "parameters": {
+        "type": "monthly",
+        "options": {}
+      },
+      "credentials": {
+        "profitWellApi": "profitwell"
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Cron",
+      "type": "n8n-nodes-base.cron",
+      "position": [
+        530,
+        220
+      ],
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "hour": 9,
+              "mode": "everyMonth"
+            }
+          ]
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Mattermost",
+      "type": "n8n-nodes-base.mattermost",
+      "position": [
+        930,
+        220
+      ],
+      "parameters": {
+        "message": "=Active Customers: {{$(\"ProfitWell\").item.json[\"active_customers\"]}}\nTrailing Customers: {{$(\"ProfitWell\").item.json[\"active_trialing_customers\"]}}\nNew Customers: {{$(\"ProfitWell\").item.json[\"new_customers\"]}}\nGrowth Rate: {{$(\"ProfitWell\").item.json[\"growth_rate\"]}}\nRecurring Revenue: {{$(\"ProfitWell\").item.json[\"recurring_revenue\"]}}",
+        "channelId": "w6rsxrqds3bt9pguxzduowqucy",
+        "attachments": [],
+        "otherOptions": {}
+      },
+      "credentials": {
+        "mattermostApi": "mattermost"
+      },
+      "typeVersion": 1
+    }
+  ],
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "connections": {
+    "Cron": {
+      "main": [
+        [
+          {
+            "node": "ProfitWell",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ProfitWell": {
+      "main": [
+        [
+          {
+            "node": "Mattermost",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

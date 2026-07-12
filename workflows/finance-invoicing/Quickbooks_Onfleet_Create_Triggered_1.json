@@ -1,0 +1,55 @@
+{
+  "name": "Create a QuickBooks invoice on a new Onfleet Task creation",
+  "nodes": [
+    {
+      "name": "Onfleet Trigger",
+      "type": "n8n-nodes-base.onfleetTrigger",
+      "position": [
+        460,
+        300
+      ],
+      "parameters": {
+        "triggerOn": "taskCreated",
+        "additionalFields": {}
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "QuickBooks Online",
+      "type": "n8n-nodes-base.quickbooks",
+      "position": [
+        680,
+        300
+      ],
+      "parameters": {
+        "Line": [],
+        "resource": "invoice",
+        "operation": "create",
+        "additionalFields": {
+          "Balance": 0,
+          "TxnDate": "",
+          "ShipAddr": "",
+          "BillEmail": ""
+        }
+      },
+      "typeVersion": 1
+    }
+  ],
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "connections": {
+    "Onfleet Trigger": {
+      "main": [
+        [
+          {
+            "node": "QuickBooks Online",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "id": "wf7dc053d05399"
+}
